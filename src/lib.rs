@@ -9,24 +9,20 @@ pub mod home {
     }
 
     pub struct Home {
-        id: usize,
         name: String,
         rooms: Vec<Room>,
     }
 
     pub struct Room {
-        id: usize,
         name: String,
-        devices: Vec<Box<dyn Device>>,
+        devices: Vec<Device>,
     }
 
     impl Home {
-        pub fn id(&self) -> usize {
-            self.id
-        }
         pub fn name(&self) -> &str {
             &self.name
         }
+
         pub fn rooms(&self) -> &Vec<Room> {
             &self.rooms
         }
@@ -38,11 +34,11 @@ pub mod home {
             todo!()
         }
 
-        pub fn find_room(&self, _id: usize) -> Option<Room> {
+        pub fn find_room(&self, _name: &str) -> Option<Room> {
             todo!()
         }
 
-        pub fn delete_room(&mut self, _id: usize) -> Result<Room, SmartHomeError> {
+        pub fn delete_room(&mut self, _name: &str) -> Result<Room, SmartHomeError> {
             todo!()
         }
 
@@ -56,70 +52,67 @@ pub mod home {
     }
 
     impl Room {
-        pub fn id(&self) -> usize {
-            self.id
-        }
         pub fn name(&self) -> &str {
             &self.name
         }
-        pub fn devices(&self) -> &Vec<Box<dyn Device>> {
+
+        pub fn devices(&self) -> &Vec<Device> {
             &self.devices
         }
 
-        pub fn add_device(
-            &mut self,
-            _device: Box<dyn Device>,
-        ) -> Result<Box<dyn Device>, SmartHomeError> {
+        pub fn add_device(&mut self, _device: Device) -> Result<Device, SmartHomeError> {
             if !self.is_unique_device(_device) {
                 return Err(SmartHomeError::DeviceIsNotUnique);
             }
             todo!()
         }
 
-        pub fn find_device(&self, _id: usize) -> Option<Box<dyn Device>> {
+        pub fn find_device(&self, _name: &str) -> Option<Device> {
             todo!()
         }
 
-        pub fn delete_device(&mut self, _id: usize) -> Result<Room, SmartHomeError> {
+        pub fn delete_device(&mut self, _name: &str) -> Result<Room, SmartHomeError> {
             todo!()
         }
 
-        fn is_unique_device(&self, _device: Box<dyn Device>) -> bool {
+        fn is_unique_device(&self, _device: Device) -> bool {
             todo!()
         }
     }
 }
 
 pub mod devices {
-    pub trait Device {
-        fn meta(&self) -> &Meta;
-    }
-
-    pub struct Meta {
-        id: usize,
+    pub struct Device {
         name: String,
         description: String,
+        device_type: DeviceType,
+    }
+
+    pub enum DeviceType {
+        SmartSocket(SmartSocket),
+        Thermometer(Thermometer),
     }
 
     pub struct SmartSocket {
         power: f64,
         enabled: bool,
-        meta: Meta,
     }
 
     pub struct Thermometer {
         temperature: f64,
-        meta: Meta,
     }
 
-    impl Device for SmartSocket {
-        fn meta(&self) -> &Meta {
-            &self.meta
+    impl Device {
+        pub fn name(&self) -> &str {
+            &self.name
         }
-    }
-    impl Device for Thermometer {
-        fn meta(&self) -> &Meta {
-            &self.meta
+
+        pub fn description(&self) -> &str {
+            &self.description
+        }
+
+        pub fn device_type(&self) -> &DeviceType {
+            &self.device_type
         }
     }
 
@@ -138,20 +131,6 @@ pub mod devices {
 
         pub fn disable(&mut self) {
             self.enabled = false
-        }
-    }
-
-    impl Meta {
-        pub fn id(&self) -> usize {
-            self.id
-        }
-
-        pub fn name(&self) -> &str {
-            &self.name
-        }
-
-        pub fn description(&self) -> &str {
-            &self.description
         }
     }
 
